@@ -1,0 +1,3 @@
+ls "my folder"
+cd "Documents"
+conf-dump

@@ -1,0 +1,6 @@
+ls
+unknown_command
+cd test
+ls
+another_bad_command
+conf-dump
