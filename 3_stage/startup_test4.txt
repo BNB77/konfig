@@ -1,0 +1,18 @@
+conf-dump
+ls
+invalid_command_test
+cd docs
+ls
+cd nonexistent_dir
+cd ..
+ls
+cd data
+ls
+cd cache
+ls
+cd ..
+cd ../src
+ls
+cd /
+ls
+conf-dump
