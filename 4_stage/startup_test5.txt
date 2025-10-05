@@ -1,0 +1,59 @@
+# Startup test script for Stage 4
+# Testing wc and history commands
+
+# Show configuration
+conf-dump
+
+# List files in root
+ls
+
+# Test wc command on different files
+wc config.txt
+
+# Navigate to docs
+cd docs
+
+# Test wc on markdown file
+wc readme.md
+
+# Test wc on license file
+wc license.txt
+
+# Navigate to src
+cd ../src
+
+# Test wc on python files
+wc main.py
+wc utils.py
+
+# Navigate to data
+cd ../data
+
+# Test wc on CSV file
+wc sample.csv
+
+# Test wc with error - nonexistent file
+wc nonexistent.txt
+
+# Navigate back to root
+cd /
+
+# Show command history
+history
+
+# List root again
+ls
+
+# Another wc test
+wc config.txt
+
+# Show updated history
+history
+
+# Test cd and ls
+cd docs
+ls
+cd ..
+
+# Final history check
+history

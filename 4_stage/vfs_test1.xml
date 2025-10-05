@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="test1_minimal">
+    <file name="readme.txt">Welcome to VFS test 1 - minimal configuration!</file>
+</vfs>
