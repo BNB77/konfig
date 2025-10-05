@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="test2_standard">
+    <file name="config.txt" owner="root" group="admin">app_name=ShellEmulator
+version=3.0
+stage=VFS_Implementation
+debug=true</file>
+    
+    <directory name="docs" owner="user1" group="developers">
+        <file name="readme.md" owner="user1" group="developers"># Shell Emulator Documentation
+
+Stage 3: Virtual File System
+
+This VFS is loaded from XML.</file>
+        <file name="license.txt" owner="user1" group="developers">MIT License
+
+Free to use and modify.</file>
+    </directory>
+    
+    <directory name="src" owner="developer" group="developers">
+        <file name="main.py" owner="developer" group="developers">#!/usr/bin/env python3
+
+def main():
+    print("Hello from VFS!")
+
+if __name__ == "__main__":
+    main()</file>
+        <file name="utils.py" owner="developer" group="developers">def helper():
+    return "VFS Helper Function"
+
+def get_version():
+    return "3.0"</file>
+    </directory>
+    
+    <directory name="data" owner="analyst" group="data">
+        <file name="sample.csv" owner="analyst" group="data">id,name,value
+1,Test1,100
+2,Test2,200
+3,Test3,300</file>
+        
+        <directory name="cache" owner="system" group="system">
+            <file name="temp.txt" owner="system" group="system">Temporary cache data</file>
+        </directory>
+    </directory>
+</vfs>

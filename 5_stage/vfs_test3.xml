@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs name="test3_deep">
+    <file name="root_file.txt">File in root directory</file>
+    
+    <directory name="level1">
+        <file name="file_l1.txt">Level 1 file</file>
+        
+        <directory name="level2">
+            <file name="file_l2.txt">Level 2 file</file>
+            
+            <directory name="level3">
+                <file name="file_l3.txt">Level 3 file - deep nesting!</file>
+                <file name="deep_data.txt">This file is 3 levels deep from root</file>
+                
+                <directory name="level4">
+                    <file name="file_l4.txt">Level 4 - even deeper!</file>
+                </directory>
+            </directory>
+            
+            <directory name="branch3">
+                <file name="parallel.txt">Parallel directory at level 3</file>
+            </directory>
+        </directory>
+        
+        <directory name="branch2">
+            <file name="another_l2.txt">Another branch at level 2</file>
+        </directory>
+    </directory>
+    
+    <directory name="projects">
+        <directory name="web">
+            <directory name="frontend">
+                <file name="index.html" encoding="base64">PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5UZXN0IFBhZ2U8L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPkhlbGxvIGZyb20gVkZTITwvaDE+CiAgICA8cD5UaGlzIGlzIGJhc2U2NCBlbmNvZGVkIGZpbGUuPC9wPgo8L2JvZHk+CjwvaHRtbD4=</file>
+                <file name="style.css">body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial;
+}</file>
+            </directory>
+            
+            <directory name="backend">
+                <file name="server.py">from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return 'Hello VFS!'</file>
+            </directory>
+        </directory>
+    </directory>
+</vfs>

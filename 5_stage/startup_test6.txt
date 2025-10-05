@@ -1,0 +1,30 @@
+conf-dump
+ls
+chown alice config.txt
+chown bob:developers docs
+cd docs
+chown charlie:users readme.md
+chown alice nonexistent.txt
+cd /
+chown david:admins src
+cd data
+chown eve:analysts sample.csv
+cd cache
+chown frank:operators temp.txt
+cd /
+history
+vfs-load vfs_test3.xml
+ls
+cd level1
+ls
+chown newuser:newgroup file_l1.txt
+cd level2
+ls
+chown admin:root file_l2.txt
+cd /
+ls
+vfs-load vfs_test1.xml
+ls
+chown minimal_owner:minimal_group readme.txt
+conf-dump
+history
