@@ -1,10 +1,10 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import socket
 import getpass
 import shlex
-import tkinter as tk
-from tkinter import scrolledtext
 import argparse
 import xml.etree.ElementTree as ET
 import base64
@@ -74,17 +74,17 @@ def load_vfs_from_xml(xml_path: str) -> bool:
         parse_node(root)
         vfs["current_dir"] = "/"
         
-        write_out(f"VFS '{vfs['name']}' loaded successfully from {xml_path}\n")
+        print(f"VFS '{vfs['name']}' loaded successfully from {xml_path}")
         return True
         
     except FileNotFoundError:
-        write_out(f"ERROR: VFS file not found: {xml_path}\n")
+        print(f"ERROR: VFS file not found: {xml_path}")
         return False
     except ET.ParseError as e:
-        write_out(f"ERROR: Invalid XML format: {e}\n")
+        print(f"ERROR: Invalid XML format: {e}")
         return False
     except Exception as e:
-        write_out(f"ERROR: Failed to load VFS: {e}\n")
+        print(f"ERROR: Failed to load VFS: {e}")
         return False
 
 def normalize_path(path: str) -> str:
@@ -146,38 +146,37 @@ def change_directory(path: str) -> bool:
 
 def command_wc(args: list) -> bool:
     if not args:
-        write_out("wc: missing file operand\n")
+        print("wc: missing file operand")
         return False
     
     file_path = args[0]
     content = get_file_content(file_path)
     
     if content is None:
-        write_out(f"wc: {file_path}: No such file or directory\n")
+        print(f"wc: {file_path}: No such file or directory")
         return False
     
     lines = content.count('\n') + (1 if content and not content.endswith('\n') else 0)
     words = len(content.split())
     chars = len(content)
     
-    write_out(f"  {lines}  {words}  {chars} {file_path}\n")
+    print(f"  {lines}  {words}  {chars} {file_path}")
     return True
 
 def show_command_history(args: list) -> bool:
     if not command_history:
-        write_out("History is empty\n")
+        print("History is empty")
         return True
     
     for idx, cmd in enumerate(command_history, 1):
-        write_out(f"  {idx}  {cmd}\n")
+        print(f"  {idx}  {cmd}")
     
     return True
 
 def command_chown(args: list) -> bool:
-    """Изменить владельца файла или директории"""
     if len(args) < 2:
-        write_out("chown: missing operand\n")
-        write_out("Usage: chown [OWNER][:GROUP] FILE\n")
+        print("chown: missing operand")
+        print("Usage: chown [OWNER][:GROUP] FILE")
         return False
     
     owner_spec = args[0]
@@ -192,36 +191,31 @@ def command_chown(args: list) -> bool:
     normalized_path = normalize_path(file_path)
     
     if normalized_path not in vfs["files"]:
-        write_out(f"chown: cannot access '{file_path}': No such file or directory\n")
+        print(f"chown: cannot access '{file_path}': No such file or directory")
         return False
     
     vfs["files"][normalized_path]["owner"] = owner
     if group:
         vfs["files"][normalized_path]["group"] = group
     
-    write_out(f"Changed owner of '{file_path}' to {owner}")
-    if group:
-        write_out(f":{group}")
-    write_out("\n")
+    print(f"Changed owner of '{file_path}' to {owner}" + (f":{group}" if group else ""))
     
     return True
 
 def command_vfs_load(args: list) -> bool:
-    """Загрузить новую VFS с диска"""
     if not args:
-        write_out("vfs-load: missing file operand\n")
-        write_out("Usage: vfs-load <path_to_vfs.xml>\n")
+        print("vfs-load: missing file operand")
+        print("Usage: vfs-load <path_to_vfs.xml>")
         return False
     
     vfs_path = args[0]
     
-    write_out(f"Loading new VFS from: {vfs_path}\n")
+    print(f"Loading new VFS from: {vfs_path}")
     success = load_vfs_from_xml(vfs_path)
     
     if success:
         config['vfs_path'] = vfs_path
-        prompt_lbl.config(text=build_prompt())
-        write_out("VFS loaded successfully. Current directory reset to root.\n")
+        print("VFS loaded successfully. Current directory reset to root.")
     
     return success
 
@@ -233,36 +227,28 @@ def prompt_path():
 def build_prompt() -> str:
     return f"{USER}@{HOST}:{prompt_path()}$ "
 
-def write_out(text: str):
-    out.config(state=tk.NORMAL)
-    out.insert(tk.END, text)
-    out.config(state=tk.DISABLED)
-    out.see(tk.END)
-
 def execute_command(cmd: str, args: list) -> bool:
     if cmd == "ls":
         path = args[0] if args else vfs["current_dir"]
         items = list_directory(path)
         
         if items is None:
-            write_out(f"ls: cannot access '{path}': No such file or directory\n")
+            print(f"ls: cannot access '{path}': No such file or directory")
             return False
         
         if items:
-            write_out("  ".join(items) + "\n")
+            print("  ".join(items))
         return True
         
     elif cmd == "cd":
         if not args:
             vfs["current_dir"] = "/"
-            prompt_lbl.config(text=build_prompt())
             return True
         
         if change_directory(args[0]):
-            prompt_lbl.config(text=build_prompt())
             return True
         else:
-            write_out(f"cd: {args[0]}: No such file or directory\n")
+            print(f"cd: {args[0]}: No such file or directory")
             return False
     
     elif cmd == "wc":
@@ -278,54 +264,33 @@ def execute_command(cmd: str, args: list) -> bool:
         return command_vfs_load(args)
             
     elif cmd == "conf-dump":
-        write_out("Configuration parameters:\n")
-        write_out(f"vfs_path = {config['vfs_path']}\n")
-        write_out(f"startup_script = {config['startup_script']}\n")
-        write_out(f"vfs_name = {vfs['name']}\n")
-        write_out(f"current_dir = {vfs['current_dir']}\n")
-        write_out(f"commands_in_history = {len(command_history)}\n")
+        print("Configuration parameters:")
+        print(f"vfs_path = {config['vfs_path']}")
+        print(f"startup_script = {config['startup_script']}")
+        print(f"vfs_name = {vfs['name']}")
+        print(f"current_dir = {vfs['current_dir']}")
+        print(f"commands_in_history = {len(command_history)}")
         return True
         
     elif cmd == "exit":
-        root.after(50, root.destroy)
         return True
     else:
-        write_out(f"{cmd}: command not found\n")
+        print(f"{cmd}: command not found")
         return False
 
-def handle_command(line: str):
-    write_out(build_prompt() + line + "\n")
-    
-    if not line.strip():
-        return
-    
-    command_history.append(line)
-    
-    try:
-        parts = shlex.split(line, posix=True)
-        if not parts:
-            return
-    except ValueError as e:
-        write_out(f"parse error: {e}\n")
-        return
-    
-    cmd = parts[0]
-    args = parts[1:]
-    execute_command(cmd, args)
-
 def execute_startup_script(script_path: str):
-    write_out(f"\n{'='*50}\n")
-    write_out(f"Executing startup script: {script_path}\n")
-    write_out('='*50 + '\n\n')
+    print(f"\n{'='*50}")
+    print(f"Executing startup script: {script_path}")
+    print('='*50 + '\n')
     
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
             lines = f.readlines()
     except FileNotFoundError:
-        write_out(f"ERROR: Startup script not found: {script_path}\n")
+        print(f"ERROR: Startup script not found: {script_path}")
         return
     except Exception as e:
-        write_out(f"ERROR: Failed to read startup script: {e}\n")
+        print(f"ERROR: Failed to read startup script: {e}")
         return
     
     for line_num, line in enumerate(lines, 1):
@@ -334,7 +299,7 @@ def execute_startup_script(script_path: str):
         if not line or line.startswith("#"):
             continue
         
-        write_out(build_prompt() + line + "\n")
+        print(build_prompt() + line)
         
         command_history.append(line)
         
@@ -348,23 +313,18 @@ def execute_startup_script(script_path: str):
             success = execute_command(cmd, args)
             
             if not success:
-                write_out(f"Warning: Command failed at line {line_num}, continuing...\n")
+                print(f"Warning: Command failed at line {line_num}, continuing...")
         except ValueError as e:
-            write_out(f"ERROR at line {line_num}: Parse error: {e}\n")
+            print(f"ERROR at line {line_num}: Parse error: {e}")
         except Exception as e:
-            write_out(f"ERROR at line {line_num}: {e}\n")
+            print(f"ERROR at line {line_num}: {e}")
     
-    write_out(f"\n{'='*50}\n")
-    write_out("Startup script execution completed\n")
-    write_out('='*50 + '\n\n')
-
-def on_enter(event=None):
-    line = inpe.get()
-    inpe.delete(0, tk.END)
-    handle_command(line)
+    print(f"\n{'='*50}")
+    print("Startup script execution completed")
+    print('='*50 + '\n')
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='OS Shell Emulator')
+    parser = argparse.ArgumentParser(description='OS Shell Emulator - Variant 15')
     parser.add_argument('--vfs', dest='vfs_path', 
                         help='Path to VFS XML file')
     parser.add_argument('--startup', dest='startup_script',
@@ -377,55 +337,58 @@ def parse_arguments():
     if args.startup_script:
         config['startup_script'] = args.startup_script
 
-def initialize_gui():
-    global root, out, inpe, prompt_lbl
-    
-    root = tk.Tk()
-    root.title("Shell Emulator - Stage 5: Additional Commands")
-    root.geometry("1000x600")
-    
-    main = tk.Frame(root)
-    main.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-    
-    inp = tk.Frame(main)
-    inp.pack(fill=tk.X)
-    
-    prompt_lbl = tk.Label(inp, text=build_prompt(), font=("Courier", 11))
-    prompt_lbl.pack(side=tk.LEFT)
-    
-    inpe = tk.Entry(inp, font=("Courier", 11))
-    inpe.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
-    inpe.bind("<Return>", on_enter)
-    
-    enter_btn = tk.Button(inp, text="Enter", command=on_enter)
-    enter_btn.pack(side=tk.RIGHT)
-    
-    out = scrolledtext.ScrolledText(main, height=25, width=80, font=("Courier", 11))
-    out.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
-    out.config(state=tk.DISABLED)
-
 def main():
     parse_arguments()
-    initialize_gui()
     
-    write_out(f"Configuration:\n")
-    write_out(f"VFS Path: {config['vfs_path']}\n")
-    write_out(f"Startup Script: {config['startup_script']}\n")
-    write_out("-" * 50 + "\n\n")
+    print(f"Configuration:")
+    print(f"VFS Path: {config['vfs_path']}")
+    print(f"Startup Script: {config['startup_script']}")
+    print("-" * 50 + "\n")
     
     if config['vfs_path']:
         load_vfs_from_xml(config['vfs_path'])
     else:
-        write_out("No VFS specified. Using empty VFS.\n")
+        print("No VFS specified. Using empty VFS.")
     
-    write_out("\n")
+    print()
     
     if config['startup_script']:
         execute_startup_script(config['startup_script'])
     
-    write_out(build_prompt())
-    inpe.focus()
-    root.mainloop()
+    while True:
+        try:
+            line = input(build_prompt())
+            
+            if not line.strip():
+                continue
+            
+            command_history.append(line)
+            
+            try:
+                parts = shlex.split(line, posix=True)
+                if not parts:
+                    continue
+                    
+                cmd = parts[0]
+                args = parts[1:]
+                
+                if cmd == "exit":
+                    print("Exiting shell emulator...")
+                    break
+                    
+                execute_command(cmd, args)
+                
+            except ValueError as e:
+                print(f"parse error: {e}")
+            except Exception as e:
+                print(f"error: {e}")
+                
+        except EOFError:
+            print("\nExiting shell emulator...")
+            break
+        except KeyboardInterrupt:
+            print("\nUse 'exit' command to quit")
+            continue
 
 if __name__ == "__main__":
     main()
